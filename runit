@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+
+BUILDER_DIR=${HOME}/github/eclipse-builder
+[ -d $BUILDER_DIR ] || { echo "$BUILDER_DIR must exist"; exit $LINENO; }
+
+BUILDER=${BUILDER_DIR}/eclipse-builder.sh
+[ -x $BUILDER ] || { echo "$BUILDER must exist"; exit $LINENO; }
+
+DIRECTOR=${BUILDER_DIR}/director/director
+[ -x $DIRECTOR ] || { echo "$DIRECTOR must exist"; exit $LINENO; }
+
+WORKDIR=${HOME}/eclipse-build
+
+# ======================================================================
+# Main
+# ======================================================================
+mkdir -p $WORKDIR
+cd $WORKDIR
+
+PATH=/usr/local/Cellar/gnu-getopt/1.1.6/bin:$PATH
+
+/usr/local/Cellar/bash/4.3.42/bin/bash -x $BUILDER \
+	-c ${DIRECTOR} \
+	-p macosx \
+	-d $WORKDIR/distros \
+	-n jbroch.net \
+	${BUILDER_DIR}/eclipse-mars-example/01_eclipse-ide.conf \
+	${BUILDER_DIR}/eclipse-mars-example/02_eclipse-base.conf \
+	${BUILDER_DIR}/eclipse-mars-example/03_eclipse-javadev.conf
+
+exit 0
