@@ -2,6 +2,10 @@
 
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ECLIPSE_CONF=${SCRIPT_DIR}/eclipse.conf
+[ -f $ECLIPSE_CONF ] || { echo "$ECLIPSE_CONF must exist"; exit $LINENO; }
+
 BUILDER_DIR=${HOME}/github/eclipse-builder
 [ -d $BUILDER_DIR ] || { echo "$BUILDER_DIR must exist"; exit $LINENO; }
 
@@ -12,6 +16,7 @@ DIRECTOR=${BUILDER_DIR}/director/director
 [ -x $DIRECTOR ] || { echo "$DIRECTOR must exist"; exit $LINENO; }
 
 WORKDIR=${HOME}/eclipse-build
+[ -d $WORKDIR ] && mv $WORKDIR $WORKDIR.$$
 
 # ======================================================================
 # Main
@@ -21,13 +26,11 @@ cd $WORKDIR
 
 PATH=/usr/local/Cellar/gnu-getopt/1.1.6/bin:$PATH
 
-/usr/local/Cellar/bash/4.3.42/bin/bash -x $BUILDER \
+/usr/local/Cellar/bash/4.3.42/bin/bash $BUILDER \
 	-c ${DIRECTOR} \
 	-p macosx \
 	-d $WORKDIR/distros \
 	-n jbroch.net \
-	${BUILDER_DIR}/eclipse-mars-example/01_eclipse-ide.conf \
-	${BUILDER_DIR}/eclipse-mars-example/02_eclipse-base.conf \
-	${BUILDER_DIR}/eclipse-mars-example/03_eclipse-javadev.conf
+	${ECLIPSE_CONF}
 
 exit 0
